@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LuZhuView">
+        <attr name="divWidth" format="float" />
+        <attr name="resTxtSize" format="integer" />
+        <attr name="titleHeight" format="integer" />
+        <attr name="titleTxtSize" format="integer" />
+        <attr name="p5Color" format="color|string|reference" />
+        <attr name="divColor" format="color|string|reference" />
+        <attr name="resBgColor" format="color|string|reference" />
+        <attr name="titleBgColor" format="color|string|reference" />
+        <attr name="titleTxtColor" format="color|string|reference" />
+    </declare-styleable>
+
+</resources>
