@@ -6,75 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:padding="@dimen/dp10"
     tools:context="com.lazy2b.app.Main2Activity">
 
-
-    <ScrollView
-        android:id="@+id/srollview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/v_linnnn"
-        android:background="@color/white"
-        android:fadingEdge="none"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/lin_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/blue"
-            android:orientation="vertical">
-
-            <com.lazy2b.app.LuZhuHorizontalScrollView
-                android:id="@+id/hor_scroll"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fadingEdge="none">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/blue"
-                    android:orientation="vertical">
-
-                    <com.lazy2b.app.LuZhuView
-                        android:id="@+id/lzv_main"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:divColor="@color/blue"/>
-                </LinearLayout>
-
-            </com.lazy2b.app.LuZhuHorizontalScrollView>
-
-
-        </LinearLayout>
-
-        <!--<LinearLayout-->
-        <!--android:id="@+id/lin_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:orientation="vertical">-->
-
-
-        <!--</LinearLayout>-->
-    </ScrollView>
-
-    <!--<HorizontalScrollView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:background="@color/blue"-->
-    <!--android:layout_height="wrap_content">-->
-
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/rv_66"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/light_grey">-->
-
-    <!--</android.support.v7.widget.RecyclerView>-->
-
-    <!--</HorizontalScrollView>-->
-
+    <include layout="@layout/tpl_luzhu_container" />
 
 </LinearLayout>

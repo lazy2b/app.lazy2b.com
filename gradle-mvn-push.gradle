@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * mvn deploy:deploy-file -DgroupId=com.sina -DartifactId=weiboSDKCore -Dversion=3.1.4 -Dpackaging=jar -Dfile=e:\BAK\Libs\libs\weiboSDKCore_3.1.4.jar  -Durl=http://192.168.1.131:8088/repository/maven-3rd -DrepositoryId=maven-3rd
+ */
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+//load properties
+Properties properties = new Properties()
+properties.load(project.file('local.properties').newDataInputStream())
+def versionName = properties.getProperty("version.name")
+def nUserName = properties.getProperty("sonatype.nexus.un")
+def nPassword = properties.getProperty("sonatype.nexus.pw")
+def nReseaseUrl = properties.getProperty("repo.release.url")
+def nSnapshotUrl = properties.getProperty("repo.snapshot.url")
+
+def developerId = properties.getProperty("pom.dev.id")
+def developerName = properties.getProperty("pom.dev.name")
+def developerEmail = properties.getProperty("pom.dev.email")
+
+def pomGroupId = properties.getProperty("group.id")
+def pomArtifactId = properties.getProperty("artifact.id")
+def pomName = properties.getProperty("pom.name")
+def pomPackaging = properties.getProperty("pom.packaging")
+def pomDesc = properties.getProperty("pom.desc")
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: nReseaseUrl) {
+                    authentication(userName: nUserName, password: nPassword)
+                }
+                snapshotRepository(url: nSnapshotUrl) {
+                    authentication(userName: nUserName, password: nPassword)
+                }
+
+                pom.project {
+                    groupId pomGroupId
+                    artifactId pomArtifactId
+                    version versionName
+                    name pomName
+                    packaging pomPackaging
+                    description pomDesc
+
+//                    url POM_URL
+//                    scm {
+//                        url POM_SCM_URL
+//                        connection POM_SCM_CONNECTION
+//                        developerConnection POM_SCM_DEV_CONNECTION
+//                    }
+
+                    licenses {
+                        license {
+                            name POM_LICENCE_NAME
+                            url POM_LICENCE_URL
+                            distribution POM_LICENCE_DIST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id developerId
+                            name developerName
+                            email developerEmail
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required {
+            versionName.contains("SNAPSHOT") == false && gradle.taskGraph.hasTask("uploadArchives")
+        }
+        sign configurations.archives
+    }
+
+//    task androidJavadocs(type: Javadoc) {
+//        source = android.sourceSets.main.java.srcDirs
+//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//        options.encoding = 'UTF-8'
+//        if (JavaVersion.current().isJava8Compatible()) {
+//            allprojects {
+//                tasks.withType(Javadoc) {
+//                    options.addStringOption('Xdoclint:none', '-quiet')
+//                }
+//            }
+//        }
+//    }
+
+//    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+//        classifier = 'javadoc'
+//        from androidJavadocs.destinationDir
+//    }
+//
+//    task androidSourcesJar(type: Jar) {
+//        classifier = 'sources'
+//        from android.sourceSets.main.java.sourceFiles
+//    }
+//
+//    artifacts {
+//        archives androidSourcesJar
+//        archives androidJavadocsJar
+//    }
+}

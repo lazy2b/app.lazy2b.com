@@ -1,10 +1,9 @@
-package com.lazy2b.app.luzhu;
+package com.caimao.luzhu.model;
 
-import com.lazy2b.libs.model.BaseModel;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class LuZhuModel extends BaseModel {
+public class LuZhuModel implements Serializable {
     public String name; // 打个路珠的名字
     public List<LuZhuExtDataModel> extData;
     //	public String closeTotal;

@@ -1,6 +1,6 @@
-package com.lazy2b.app.luzhu;
+package com.caimao.luzhu.model;
 
-import com.lazy2b.libs.model.BaseModel;
+import java.io.Serializable;
 
 /**
  * 项目名: HighFrequencyLotteryBox
@@ -9,10 +9,11 @@ import com.lazy2b.libs.model.BaseModel;
  * $Id$
  */
 
-public class LuZhuExtDataModel extends BaseModel {
+public class LuZhuExtDataModel implements Serializable {
     public String Name = "";
     public int Count = 0;
-    public String getExtStr(){
-        return Name+"("+Count+")";
+
+    public String getExtStr() {
+        return Name + "(" + Count + ")";
     }
 }

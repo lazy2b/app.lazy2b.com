@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LuZhuSurfaceView">
+        <attr name="divWidth" format="dimension|reference" />
+        <attr name="resTxtSize" format="dimension|reference" />
+        <attr name="titleHeight" format="dimension|reference" />
+        <attr name="titleTxtSize" format="dimension|reference" />
+        <attr name="resTxtPadding" format="dimension|reference" />
+        <attr name="p5Color" format="color|reference" />
+        <attr name="divColor" format="color|reference" />
+        <attr name="resBgColor" format="color|reference" />
+        <attr name="titleBgColor" format="color|reference" />
+        <attr name="titleTxtColor" format="color|reference" />
+    </declare-styleable>
+
+    <!--<declare-styleable name="LuZhuHorizontalView">-->
+    <!--<attr name="divWidth" format="dimension|reference" />-->
+    <!--<attr name="resTxtSize" format="dimension|reference" />-->
+    <!--<attr name="titleHeight" format="dimension|reference" />-->
+    <!--<attr name="titleTxtSize" format="dimension|reference" />-->
+    <!--<attr name="resTxtPadding" format="dimension|reference" />-->
+    <!--<attr name="p5Color" format="color|reference" />-->
+    <!--<attr name="divColor" format="color|reference" />-->
+    <!--<attr name="resBgColor" format="color|reference" />-->
+    <!--<attr name="titleBgColor" format="color|reference" />-->
+    <!--<attr name="titleTxtColor" format="color|reference" />-->
+    <!--</declare-styleable>-->
+
+    <string name="app_name">LuZhuView</string>
+
+    <style name="LuZhuItemStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="resBgColor">#f7f7f7</item>
+        <item name="titleBgColor">#f7f7f7</item>
+        <item name="divColor">#cccccc</item>
+        <item name="p5Color">#b8b8b8</item>
+        <item name="titleTxtSize">15dp</item>
+        <item name="resTxtPadding">2dp</item>
+        <item name="resTxtSize">14dp</item>
+    </style>
+
+</resources>

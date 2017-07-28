@@ -1,39 +1,21 @@
 package com.lazy2b.app;
 
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.deserializer.ExtraProcessor;
-import com.lazy2b.app.luzhu.LuZhuModel;
+import com.caimao.luzhu.view.LuZhuContainerView;
+import com.caimao.luzhu.view.LuZhuSurfaceView;
 import com.lazy2b.app.luzhu.RespLuZhuModel;
 import com.lazy2b.libs.app.BaseHttpActivity;
 import com.lazy2b.libs.model.RespBaseModel;
-import com.lazy2b.libs.utils.DensityUtils;
 import com.lidroid.xutils.exception.HttpException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 public class Main2Activity extends BaseHttpActivity {
-
-//    public static final int rows = 100;
-
-//    RecyclerView rv_66;
-
-    LinearLayout ll_conatior;
-    List<?> mList;
 
     protected long tTs(String date) {
         return dateToTimetick(date, "yyyy-MM-dd");
@@ -72,6 +54,7 @@ public class Main2Activity extends BaseHttpActivity {
         String jsonCache = App.spu().getString("lzdata", "");
 //        if (TextUtils.isEmpty(jsonCache)) {
         get("dsd", "http://m.1396mo.com/pk10/BigorSmallRoadmap?version=3000&timestamp="
+//                        +"0"
                         + tTs("2017-07-10")
                 , RespLuZhuModel.class);
 //        } else {
@@ -142,47 +125,11 @@ public class Main2Activity extends BaseHttpActivity {
         }
     };
 
-    LinearLayout lin_layout;
+    LuZhuContainerView mLzView;
 
     @Override
     public void initView() {
-        ll_conatior = (LinearLayout) findViewById(R.id.ll_conatior);
-        mHorizontalScrollView = (HorizontalScrollView) findViewById(R.id.hor_scroll);
-        lzv = (LuZhuView) findViewById(R.id.lzv_main);
-        lin_layout = (LinearLayout) findViewById(R.id.lin_layout);
-        mScrollView = (ScrollView) findViewById(R.id.srollview);
-        ViewTreeObserver vto2 = mScrollView.getViewTreeObserver();
-        vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mHorizontalScrollView.setMinimumHeight(mScrollView.getHeight());
-            }
-        });
-        lzv.setColorMap(COLOR);
-//        rv_66 = (RecyclerView) findViewById(R.id.rv_66);
-    }
-
-    int i = 0;
-    ScrollView mScrollView;
-    HorizontalScrollView mHorizontalScrollView;
-    LuZhuView lzv;
-
-    protected List<LuZhuModel> fillEmptyModel(List<LuZhuModel> items) {
-        int mostColumnCnt = 0;
-        for (LuZhuModel item : items) {
-            if (item.resData.size() > mostColumnCnt) {
-                mostColumnCnt = item.resData.size();
-            }
-        }
-        for (LuZhuModel item : items) {
-            if (item.resData.size() < mostColumnCnt) {
-                int lostCnt = mostColumnCnt - item.resData.size();
-                for (int i = 0; i < lostCnt; i++) {
-                    item.resData.add(0, " ");
-                }
-            }
-        }
-        return items;
+        mLzView = LuZhuContainerView.create(mCxt, (ViewGroup) findViewById(R.id.sv_luzhu)).txtColor(COLOR);
     }
 
     @Override
@@ -190,40 +137,7 @@ public class Main2Activity extends BaseHttpActivity {
         if (!TextUtils.isEmpty(respBaseModel.str)) {
             App.spu().putString("lzdata", respBaseModel.str);
         }
-        RespLuZhuModel reap = (RespLuZhuModel) respBaseModel;
-//        mList = ;
-
-//        lin_layout.setLayoutParams(new FrameLayout.LayoutParams(600,1000));
-
-//        ll_conatior.addView(lv);
-
-//        hor_scroll.setMinimumWidth(1000);
-//
-//        hor_scroll.addView(lv);
-        lzv.setBackgroundColor(Color.LTGRAY);
-//        lzv.setLayoutParams(new LinearLayout.LayoutParams(600, 1000));
-        lzv.setData(fillEmptyModel((List<LuZhuModel>) reap.getList()));
-//        lzv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (i++ % 2 == 0) {
-//                    lzv.setData(null);
-//                } else {
-//                    lzv.setData((List<LuZhuModel>) mList);
-//                }
-////
-//            }
-//        });
-
-//        GridLayoutManager glm = new GridLayoutManager(this, reap.mostColumnCnt);, lvLp
-//        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-//            @Override
-//            public int getSpanSize(int position) {
-//                return position % (reap.mostColumnCnt + 1) == 0 ? reap.mostColumnCnt : 1;
-//            }
-//        });
-//        rv_66.setLayoutManager(glm);
-//        rv_66.setAdapter(new LuZhuAdapter(this, mList));
+        mLzView.fillData(((RespLuZhuModel) respBaseModel).items);
     }
 
     @Override

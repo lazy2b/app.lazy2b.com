@@ -3,7 +3,7 @@ package com.lazy2b.app.luzhu;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.deserializer.ExtraProcessor;
-import com.lazy2b.app.LuZhuAdapter;
+import com.caimao.luzhu.model.LuZhuModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,27 +15,10 @@ public class RespLuZhuModel extends RespCommModel implements ExtraProcessor {
      * 记录当前路珠数据最大列数
      */
     public static int mostColumnCnt = 1;
-    List<LuZhuDataModel> nFormat = new ArrayList<>();
 
     @Override
     public boolean isEmpty() {
         return items == null || items.size() == 0;
-    }
-
-    void fillEmptyModel() {
-        for (LuZhuModel item : items) {
-            nFormat.add(new LuZhuDataModel(LuZhuAdapter.LUZHU_TITLE_VIEW_TYPE, item.getTitleStr(), -1));
-            for (String res : item.resData) {
-                nFormat.add(new LuZhuDataModel(LuZhuAdapter.LUZHU_RESULT_VIEW_TYPE, res, item.mostResCnt));
-            }
-            if (item.resData.size() < mostColumnCnt) {
-                int lostCnt = mostColumnCnt - item.resData.size();
-                for (int i = 0; i < lostCnt; i++) {
-                    nFormat.add(0, new LuZhuDataModel(LuZhuAdapter.LUZHU_RESULT_VIEW_TYPE, " ", item.mostResCnt));
-                    item.resData.add(0, " ");
-                }
-            }
-        }
     }
 
     @Override

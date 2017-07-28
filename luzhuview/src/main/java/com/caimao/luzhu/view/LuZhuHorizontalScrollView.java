@@ -1,6 +1,8 @@
-package com.lazy2b.app;
+package com.caimao.luzhu.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.HorizontalScrollView;
 
@@ -23,25 +25,6 @@ public class LuZhuHorizontalScrollView extends HorizontalScrollView {
     public LuZhuHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-    public LuZhuHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-//    @Override
-//    public void fling(int velocityX) {
-//        super.fling(velocityX);
-//        listener.fling(velocityX);
-//        LogUtils.e(" x:" + velocityX
-//                + " getX:" + getX()
-//                + " getPivotX:" + getPivotX()
-//                + " getRotationX:" + getRotationX()
-//                + " getTranslationX:" + getTranslationX()
-//                + " getScaleX:" + getScaleX()
-//                + " getScrollX:" + getScrollX()
-//        );
-//    }
-
 
     protected ScrollViewListener mScroollViewListener;
 
