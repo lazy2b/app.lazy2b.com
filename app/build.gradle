@@ -31,8 +31,9 @@ dependencies {
     //    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //    testCompile 'junit:junit:4.12'
     compile project(":luzhuview")
+    compile project(":lazylibs")
 //    compile 'com.caimao:luzhuview:1.0.0-20170727.030851-1'
-    compile 'com.lazy2b:lazylibs:1.1.0-20170527.103123-13'
+//    compile 'com.lazy2b:lazylibs:1.1.0-20170527.103123-13'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
