@@ -1,1 +1,3 @@
-include ':app', ':lazylibs2.0'
+include ':app'
+include ':luzhuview'
+include ':lazylibs'
