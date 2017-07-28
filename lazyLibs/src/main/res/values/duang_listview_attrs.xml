@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DuangListView">
+        <!-- Duang's Height, Integer Nums. dp -->
+        <attr name="dempHeight" format="integer" />
+        <attr name="dempTopHeight" format="integer" />
+        <attr name="dempBottomHeight" format="integer" />
+        <attr name="dempTop" format="boolean" />
+        <attr name="dempBottom" format="boolean" />
+    </declare-styleable>
+</resources>
