@@ -1,6 +1,10 @@
 [
     {
-        "merged": "E:\\WorkSpace\\AndroidStudioProjects\\app.lazy2b.com\\lazyLibs\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\indicator_arrow.png",
-        "source": "E:\\WorkSpace\\AndroidStudioProjects\\app.lazy2b.com\\lazyLibs\\build\\intermediates\\bundles\\debug\\res\\drawable\\indicator_arrow.png"
+        "merged": "/Users/lazy2b/Workspace/ASP/app.lazy2b.com/lazyLibs/build/intermediates/res/merged/androidTest/debug/drawable/indicator_arrow.png",
+        "source": "/Users/lazy2b/Workspace/ASP/app.lazy2b.com/lazyLibs/build/intermediates/bundles/debug/res/drawable/indicator_arrow.png"
+    },
+    {
+        "merged": "/Users/lazy2b/Workspace/ASP/app.lazy2b.com/E:\\WorkSpace\\AndroidStudioProjects\\app.lazy2b.com\\lazyLibs\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\indicator_arrow.png",
+        "source": "/Users/lazy2b/Workspace/ASP/app.lazy2b.com/E:\\WorkSpace\\AndroidStudioProjects\\app.lazy2b.com\\lazyLibs\\build\\intermediates\\bundles\\debug\\res\\drawable\\indicator_arrow.png"
     }
 ]

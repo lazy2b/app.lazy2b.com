@@ -1,19 +1,17 @@
 package com.caimao.luzhu.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 import android.view.SurfaceHolder;
+import android.widget.LinearLayout;
 
 import com.caimao.luzhu.model.LuZhuModel;
 
@@ -163,7 +161,7 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
         return drawResult(tmp).getHeight();
     }
 
-    void measureSize() {
+    LinearLayout.LayoutParams measureSize() {
         if (mItem != null && mItem.resData.size() > 0) {
             mResultWidth = measuredWidth(TEXT_TEMPLATE) + mMgr.resTxtPadding * 2;
             mResultSingleHeight = measuredHeight(1, TEXT_TEMPLATE);
@@ -171,10 +169,14 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
             int tmp = (int) Math.ceil(widthPixels / mResultWidth);
             mMostColumnCnt = tmp > mMostColumnCnt ? (tmp + 1) : mMostColumnCnt;
             mTotalWidth = mMostColumnCnt * mResultWidth;
+            /* * 初始化其他变量 * */
+            Paint.FontMetrics fm = mTitlePaint.getFontMetrics();
+            mTitlePadding = (mMgr.titleHeight - (fm.descent - fm.ascent)) / 2;
         }
+        return new LinearLayout.LayoutParams(mTotalWidth, mTotalHeight);
     }
 
-    LuZhuItemViewMgr mMgr = null;
+    protected LuZhuItemViewMgr mMgr = null;
     protected float mTitlePadding = 0;
     protected int
             widthPixels = 720,
@@ -185,9 +187,6 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
             mResultSingleHeight = 0;
 
     protected Context mCxt;
-    protected SurfaceHolder mHolder;
-
-    //    protected Bitmap mCacheBitMap;
     protected Canvas mCacheCanvas;
     protected TextPaint mResultPaint;
     protected Paint mTitlePaint, mBgPaint;
@@ -197,66 +196,45 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
     protected int mMostColumnCnt = 37;
 
     public LuZhuCacheTasks(Context context, LuZhuItemViewMgr mgr) {
-        mCxt = context;
         mMgr = mgr;
+        mCxt = context;
         widthPixels = mTotalWidth = mCxt.getResources().getDisplayMetrics().widthPixels;
         heightPixels = mTotalHeight = mCxt.getResources().getDisplayMetrics().heightPixels;
         if (mResultPaint == null) {
             mResultPaint = new TextPaint();
             mTitlePaint = new Paint();
             mBgPaint = new Paint();
-        }
-    }
-
-
-    @Override
-    protected void onPreExecute() {
-        /* * 初始化路珠结果画笔 * */
-        mResultPaint.setColor(Color.DKGRAY);
-        mResultPaint.setTextSize(mMgr.resTxtSize);
-        mResultPaint.setAntiAlias(true);
+             /* * 初始化路珠结果画笔 * */
+            mResultPaint.setColor(Color.DKGRAY);
+            mResultPaint.setTextSize(mMgr.resTxtSize);
+            mResultPaint.setAntiAlias(true);
         /* * 初始化标题画笔 * */
-        mTitlePaint.setColor(mMgr.titleTxtColor);
-        mTitlePaint.setTextSize(mMgr.titleTxtSize);
-        mTitlePaint.setAntiAlias(true);
-        measureSize();
-        Log.e("LuZhuCacsk.onPreExecute", mTotalWidth + ":" + mTotalHeight);
-//        mCacheCanvas = mHolder.lockCanvas(LuZhuItemViewMgr.r(0, 0, mTotalWidth, mTotalHeight));
-//        mCacheBitMap = Bitmap.createBitmap(
-//                // 600, 1000, Bitmap.Config.ARGB_8888);
-//                mTotalWidth, mTotalHeight, Bitmap.Config.RGB_565);
-//        mCacheCanvas.setBitmap(mCacheBitMap);
-        /* * 初始化其他变量 * */
-        Paint.FontMetrics fm = mTitlePaint.getFontMetrics();
-        mTitlePadding = (mMgr.titleHeight - (fm.descent - fm.ascent)) / 2;
-    }
-
-    @Override
-    protected int[] doInBackground(SurfaceHolder... params) {
-//        doDraw();
-        Paint mPaint = new Paint();
-        mPaint.setColor(Color.YELLOW);
-        mCacheCanvas = params[0].lockCanvas(null);
-        mCacheCanvas.drawRect(new RectF(100, 100, 720 - 100, 700 - 100), mPaint);
-        params[0].unlockCanvasAndPost(mCacheCanvas);
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Object object) {
-        if (mCompleteListener != null) {
-
-            Log.e("LuZhuCacheTasks", "onPostExecute(Object object)");
-            if (mCompleteListener.onDrawComplete(mCacheCanvas.getWidth(), mCacheCanvas.getHeight())) {
-            }
+            mTitlePaint.setColor(mMgr.titleTxtColor);
+            mTitlePaint.setTextSize(mMgr.titleTxtSize);
+            mTitlePaint.setAntiAlias(true);
         }
     }
 
-    public final LuZhuCacheTasks execute(LuZhuModel item, int mostColumnCnt, OnDrawCompleteListener listener) {
+    public LinearLayout.LayoutParams init(LuZhuModel item, int mostColumnCnt, OnDrawCompleteListener listener) {
         mItem = item;
         mMostColumnCnt = mostColumnCnt;
         mCompleteListener = listener;
-        return (LuZhuCacheTasks) super.execute();
+        return measureSize();
+    }
+
+
+    @Override
+    protected int[] doInBackground(SurfaceHolder... holder) {
+        if (holder != null && holder.length > 0 && mItem != null && mItem.resData.size() > 0) {
+            mCacheCanvas = holder[0].lockCanvas(new Rect(0, 0, mTotalWidth, mTotalHeight));
+            doDraw();
+            holder[0].unlockCanvasAndPost(mCacheCanvas);
+            if (mCompleteListener != null) {
+                if (mCompleteListener.onDrawComplete(mTotalWidth, mTotalHeight)) {
+                }
+            }
+        }
+        return null;
     }
 
 }

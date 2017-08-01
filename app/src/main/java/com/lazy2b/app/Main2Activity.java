@@ -4,7 +4,6 @@ import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import com.caimao.luzhu.view.LuZhuContainerView;
-import com.caimao.luzhu.view.LuZhuSurfaceView;
 import com.lazy2b.app.luzhu.RespLuZhuModel;
 import com.lazy2b.libs.app.BaseHttpActivity;
 import com.lazy2b.libs.model.RespBaseModel;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 
 public class Main2Activity extends BaseHttpActivity {
 
-    protected long tTs(String date) {
+    public static long tTs(String date) {
         return dateToTimetick(date, "yyyy-MM-dd");
     }
 
@@ -49,7 +48,7 @@ public class Main2Activity extends BaseHttpActivity {
 
     @Override
     protected void onCreate() {
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.tpl_luzhu_container);
         super.onCreate();
         String jsonCache = App.spu().getString("lzdata", "");
 //        if (TextUtils.isEmpty(jsonCache)) {

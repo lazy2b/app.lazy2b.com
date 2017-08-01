@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.caimao.luzhu.R;
 import com.caimao.luzhu.model.LuZhuModel;
@@ -24,7 +23,7 @@ import java.util.Map;
  * $Id$
  */
 
-public class LuZhuContainerView {
+public class LuZhuContainerView implements LuZhuCacheTasks.OnDrawCompleteListener {
 
     protected static Map<String, Integer> mTxtColor = new HashMap<String, Integer>();
 
@@ -102,13 +101,13 @@ public class LuZhuContainerView {
         onDestory();
         mDataList = fillEmptyModel(items);
 //        LuZhuItemView lzv;
-        LuZhuHorizontalView lzv;
+        LuZhuSurfaceView lzv;
 //        long t = System.currentTimeMillis();
         for (LuZhuModel item : mDataList) {
-            lzv = (LuZhuHorizontalView) mInflater.inflate(R.layout.tpl_luzhu_hor, null);
+            lzv = (LuZhuSurfaceView) mInflater.inflate(R.layout.tpl_luzhu_surface, null);
             lzv.setColorMap(mTxtColor);
-            lzv.setData(item, mostColumnCnt);
-            mLuZhuContainerView.addView(lzv);
+            lzv.setOnCompleteListener(this);
+            mLuZhuContainerView.addView(lzv, lzv.setData(item, mostColumnCnt));
         }
         mHorizontalScrollView.postDelayed(new Runnable() {
             public void run() {
@@ -118,4 +117,8 @@ public class LuZhuContainerView {
 //        Toast.makeText(mCxt, "complete!" + (System.currentTimeMillis() - t), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public boolean onDrawComplete(int width, int height) {
+        return false;
+    }
 }

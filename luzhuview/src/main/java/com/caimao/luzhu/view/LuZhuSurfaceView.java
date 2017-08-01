@@ -1,19 +1,13 @@
 package com.caimao.luzhu.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.PixelFormat;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.caimao.luzhu.model.LuZhuModel;
 
@@ -28,9 +22,10 @@ import java.util.Map;
 
 public class LuZhuSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
-    protected SurfaceHolder mHolder;
     protected Context mCxt;
+    protected SurfaceHolder mHolder;
     protected LuZhuItemViewMgr mLuZhuMgr;
+    protected LuZhuCacheTasks mLuZhuTask;
 
     public LuZhuSurfaceView(Context context) {
         this(context, null);
@@ -43,115 +38,48 @@ public class LuZhuSurfaceView extends SurfaceView implements SurfaceHolder.Callb
         Log.e("LuZhuSurfaceView", "LuZhuSurfaceView(Context context, AttributeSet attrs)");
     }
 
-    DrawThread mThread;
 
     void init(Context context, AttributeSet attrs) {
         mCxt = context;
         mLuZhuMgr = LuZhuItemViewMgr.create(context, attrs);
         mHolder = getHolder();
         mHolder.addCallback(this); // 添加surface回调函数
-        mThread = new DrawThread(mHolder);
+        getHolder().setFormat(PixelFormat.TRANSLUCENT);
         Log.e("LuZhuSurfaceView", "init(Context context, AttributeSet attrs)");
         isInEditMode();
+    }
+
+    LuZhuCacheTasks initTask() {
+        if (mLuZhuTask != null) {
+//            mLuZhuTask.clean();
+            if (mLuZhuTask.getStatus() != AsyncTask.Status.FINISHED) {
+                mLuZhuTask.cancel(true);
+            }
+        }
+        mLuZhuTask = null;
+        mLuZhuTask = new LuZhuCacheTasks(mCxt, mLuZhuMgr);
+        return mLuZhuTask;
     }
 
     public void setColorMap(Map<String, Integer> tColorMap) {
         mLuZhuMgr.cMaps(tColorMap);
     }
 
-    public void setData(SurfaceHolder holder) {
+    LuZhuCacheTasks.OnDrawCompleteListener mListener;
 
-
-//        Canvas canvas = getHolder().lockCanvas(null);//获取画布
-//        Paint mPaint = new Paint();
-//        mPaint.setColor(Color.YELLOW);
-//        canvas.drawRect(new RectF(100, 100, getWidth() - 100, getHeight() - 100), mPaint);
-//        getHolder().unlockCanvasAndPost(canvas);//解锁画布，提交画好的图像
-
-//        if (mCacheTask != null) {
-//            mCacheTask.clean();
-//            if (mCacheTask.getStatus() != AsyncTask.Status.FINISHED) {
-//                mCacheTask.cancel(true);
-//            }
-//        }
-//        mCacheTask = null;
-////        mCacheTask =
-
-//        new AsyncTask<SurfaceHolder, Object, Object>() {
-//            @Override
-//            protected Object doInBackground(SurfaceHolder... params) {
-//                Paint mPaint = new Paint();
-//                mPaint.setColor(Color.YELLOW);
-//                Canvas mCacheCanvas = params[0].lockCanvas(LuZhuItemViewMgr.r(100, 100, 720, 700));
-//                mCacheCanvas.drawRect(new RectF(100, 100, 720 - 100, 700 - 100), mPaint);
-//                params[0].unlockCanvasAndPost(mCacheCanvas);
-//                return null;
-//            }
-//        }.execute(getHolder());
-
-//        mThread.start();
-        new LuZhuCacheTasks(mCxt, mLuZhuMgr)
-                .execute(holder);
-////                .execute(item, mostColumnCnt, this);
+    public void setOnCompleteListener(LuZhuCacheTasks.OnDrawCompleteListener listener) {
+        mListener = listener;
     }
 
-    class DrawThread extends Thread {
-
-        SurfaceHolder mHolder = null;
-
-        public DrawThread(SurfaceHolder holder) {
-            mHolder = holder;
-        }
-
-        @Override
-        public void run() {
-            super.run();
-
-            Paint mPaint = new Paint();
-            mPaint.setColor(Color.YELLOW);
-            Canvas mCacheCanvas = mHolder.lockCanvas(LuZhuItemViewMgr.r(5, 5, 720, 700));
-            mCacheCanvas.drawRect(new RectF(5, 5, 720 - 100, 700 - 100), mPaint);
-            mHolder.unlockCanvasAndPost(mCacheCanvas);
-
-        }
+    public synchronized LinearLayout.LayoutParams setData(LuZhuModel item, int mostColumnCnt) {
+        return initTask().init(item, mostColumnCnt, mListener);
     }
-
-    public void setData(LuZhuModel item, int mostColumnCnt) {
-
-        Canvas canvas = getHolder().lockCanvas(null);//获取画布
-        Paint mPaint = new Paint();
-        mPaint.setColor(Color.YELLOW);
-        canvas.drawRect(new RectF(100, 100, getWidth() - 100, getHeight() - 100), mPaint);
-        getHolder().unlockCanvasAndPost(canvas);//解锁画布，提交画好的图像
-
-//        if (mCacheTask != null) {
-//            mCacheTask.clean();
-//            if (mCacheTask.getStatus() != AsyncTask.Status.FINISHED) {
-//                mCacheTask.cancel(true);
-//            }
-//        }
-//        mCacheTask = null;
-//        mCacheTask = new LuZhuCacheTasks(mCxt, mLuZhuMgr, getHolder().lockCanvas())
-//                .execute(item, mostColumnCnt, this);
-    }
-
-    //    Bitmap mCacheBitMap;
-    LuZhuCacheTasks mCacheTask;
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
-
-        Log.e("LuZhuSurfaceView", "surfaceCreated(SurfaceHolder holder)");
-        Canvas canvas = holder.lockCanvas(null);//获取画布
-        Paint mPaint = new Paint();
-        mPaint.setColor(Color.BLUE);
-        canvas.drawRect(new RectF(0, 0, getWidth(), getHeight()), mPaint);
-        holder.unlockCanvasAndPost(canvas);//解锁画布，提交画好的图像
-
-
-        setData(holder);
-        Log.e("surfaceCreated", "sdfsdfsd");
+        if (mLuZhuTask.getStatus() != AsyncTask.Status.FINISHED && mLuZhuTask.getStatus() != AsyncTask.Status.RUNNING) {
+            mLuZhuTask.execute(holder);
+        }
     }
 
     @Override
