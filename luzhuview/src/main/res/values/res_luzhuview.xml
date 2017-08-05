@@ -36,9 +36,9 @@
         <item name="titleBgColor">#f7f7f7</item>
         <item name="divColor">#cccccc</item>
         <item name="p5Color">#b8b8b8</item>
-        <item name="titleTxtSize">15dp</item>
-        <item name="resTxtPadding">2dp</item>
-        <item name="resTxtSize">14dp</item>
+        <item name="titleTxtSize">11dp</item>
+        <item name="resTxtPadding">1dp</item>
+        <item name="resTxtSize">10dp</item>
     </style>
 
 </resources>

@@ -37,6 +37,14 @@ public class LuZhuItemViewMgr {
         return (int) (dpValue * scale + 0.5F);
     }
 
+    public final static float getDensity(Context context) {
+        return context.getResources().getDisplayMetrics().density;
+    }
+
+    public final static int dip2px(Context context, float dpValue) {
+        return (int) (context.getResources().getDisplayMetrics().density * dpValue + 0.5F);
+    }
+
     public static final RectF rf(float l, float t, float r, float b) {
         return new RectF(l, t, r, b);
     }
@@ -64,10 +72,10 @@ public class LuZhuItemViewMgr {
         attr = context.obtainStyledAttributes(attrs, R.styleable.LuZhuSurfaceView);
 
         divWidth = d(R.styleable.LuZhuSurfaceView_divWidth, dip2px(0.5f));
-        resTxtSize = d(R.styleable.LuZhuSurfaceView_resTxtSize, dip2px(14f));
-        titleHeight = d(R.styleable.LuZhuSurfaceView_titleHeight, dip2px(35f));
-        titleTxtSize = d(R.styleable.LuZhuSurfaceView_titleTxtSize, dip2px(14f));
-        resTxtPadding = d(R.styleable.LuZhuSurfaceView_resTxtPadding, dip2px(2f));
+        resTxtSize = d(R.styleable.LuZhuSurfaceView_resTxtSize, dip2px(11.5f));
+        titleHeight = d(R.styleable.LuZhuSurfaceView_titleHeight, dip2px(30f));
+        titleTxtSize = d(R.styleable.LuZhuSurfaceView_titleTxtSize, dip2px(13f));
+        resTxtPadding = d(R.styleable.LuZhuSurfaceView_resTxtPadding, dip2px(1f));
 
         p5Color = c(R.styleable.LuZhuSurfaceView_p5Color, Color.LTGRAY);
         divColor = c(R.styleable.LuZhuSurfaceView_divColor, Color.LTGRAY);

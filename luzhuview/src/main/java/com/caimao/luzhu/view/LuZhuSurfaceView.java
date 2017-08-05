@@ -1,7 +1,13 @@
 package com.caimao.luzhu.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -9,8 +15,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.LinearLayout;
 
+import com.caimao.luzhu.R;
 import com.caimao.luzhu.model.LuZhuModel;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +34,8 @@ public class LuZhuSurfaceView extends SurfaceView implements SurfaceHolder.Callb
     protected SurfaceHolder mHolder;
     protected LuZhuItemViewMgr mLuZhuMgr;
     protected LuZhuCacheTasks mLuZhuTask;
+    protected List<LuZhuModel> mList;
+    int width, height;
 
     public LuZhuSurfaceView(Context context) {
         this(context, null);
@@ -33,17 +43,24 @@ public class LuZhuSurfaceView extends SurfaceView implements SurfaceHolder.Callb
     }
 
     public LuZhuSurfaceView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+        this(context, attrs, R.style.LuZhuItemStyle);
+
         Log.e("LuZhuSurfaceView", "LuZhuSurfaceView(Context context, AttributeSet attrs)");
     }
 
+    public LuZhuSurfaceView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, R.style.LuZhuItemStyle);
+        init(context, attrs);
+    }
 
     void init(Context context, AttributeSet attrs) {
         mCxt = context;
         mLuZhuMgr = LuZhuItemViewMgr.create(context, attrs);
         mHolder = getHolder();
         mHolder.addCallback(this); // 添加surface回调函数
+//        mHolder.setFixedSize(4096, 4096);
+        width = mCxt.getResources().getDisplayMetrics().widthPixels;
+        height = mCxt.getResources().getDisplayMetrics().heightPixels;
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
         Log.e("LuZhuSurfaceView", "init(Context context, AttributeSet attrs)");
         isInEditMode();
@@ -71,13 +88,31 @@ public class LuZhuSurfaceView extends SurfaceView implements SurfaceHolder.Callb
         mListener = listener;
     }
 
-    public synchronized LinearLayout.LayoutParams setData(LuZhuModel item, int mostColumnCnt) {
-        return initTask().init(item, mostColumnCnt, mListener);
+    public synchronized LinearLayout.LayoutParams setData(List<LuZhuModel> list) {
+        mList = list;
+        return initTask().init(mList, mListener);
+    }
+
+
+    void drawBg(SurfaceHolder holder) {
+//        Canvas canvas = holder.lockCanvas();
+//        if (canvas != null) {
+//            Paint bg = new Paint();
+//            bg.setColor(Color.WHITE);
+//            bg.setStyle(Paint.Style.FILL);
+//            canvas.drawRect(new RectF(0, 0, width, height), bg);
+//            holder.unlockCanvasAndPost(canvas);
+//        }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        drawBg(holder);
+        Log.e("LuZhuSurfaceView", "surfaceCreated(SurfaceHolder holder)");
         if (mLuZhuTask.getStatus() != AsyncTask.Status.FINISHED && mLuZhuTask.getStatus() != AsyncTask.Status.RUNNING) {
+            mLuZhuTask.execute(holder);
+        } else {
+            initTask().init(mList, mListener);
             mLuZhuTask.execute(holder);
         }
     }

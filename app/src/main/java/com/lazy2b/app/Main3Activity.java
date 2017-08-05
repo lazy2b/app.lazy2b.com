@@ -78,7 +78,7 @@ public class Main3Activity extends BaseHttpActivity implements LuZhuCacheTasks.O
 
     @Override
     public void initView() {
-        ll_sh_luzhu = (LinearLayout) findViewById(R.id.ll_sh_luzhu);
+//        ll_sh_luzhu = (LinearLayout) findViewById(R.id.ll_sh_luzhu);
         Log.e("Main3Activity", "onCreate(Bundle savedInstanceState)");
         lsv = new LuZhuSurfaceView(this);
         lsv.setColorMap(Main2Activity.COLOR);
@@ -86,23 +86,8 @@ public class Main3Activity extends BaseHttpActivity implements LuZhuCacheTasks.O
 
     }
 
-    protected List<LuZhuModel> fillEmptyModel(List<LuZhuModel> items) {
-        for (LuZhuModel item : items) {
-            if (item.resData.size() > mostColumnCnt) {
-                mostColumnCnt = item.resData.size();
-            }
-        }
-        return items;
-    }
-
-
-    protected List<LuZhuModel> mDataList;
-
-    protected int mostColumnCnt = 0;
-
     public void onDestory() {
         try {
-            mostColumnCnt = 0;
 //            for (int i = 0; i < mLuZhuContainerView.getChildCount(); i++) {
 //                ((ViewGroup) mLuZhuContainerView.getChildAt(i)).removeAllViews();
 //            }
@@ -114,8 +99,7 @@ public class Main3Activity extends BaseHttpActivity implements LuZhuCacheTasks.O
 
     public void fillData(List<LuZhuModel> items) {
         onDestory();
-        mDataList = fillEmptyModel(items);
-        ll_sh_luzhu.addView(lsv, lsv.setData(mDataList.get(0), mostColumnCnt));
+        ll_sh_luzhu.addView(lsv, lsv.setData(items));
     }
 
     @Override

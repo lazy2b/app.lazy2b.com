@@ -41,10 +41,10 @@ public class App extends BaseAppMgr {
     }
 
     protected void init() {
-        if(!d) {
-            CrashHandler catchExcep = new CrashHandler(this);
-            Thread.setDefaultUncaughtExceptionHandler(catchExcep);
-        }
+//        if(!d) {
+//            CrashHandler catchExcep = new CrashHandler(this);
+//            Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+//        }
 
         AppData.init(cxt);
         Http.init(cxt, this.getHttpCfg());

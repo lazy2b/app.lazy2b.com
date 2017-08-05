@@ -10,11 +10,13 @@ import android.os.AsyncTask;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.LinearLayout;
 
 import com.caimao.luzhu.model.LuZhuModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,13 +35,20 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
     }
 
     void doDraw() {
-        if (mItem != null && mItem.resData.size() > 0) {
+        if (mList != null && mList.size() > 0) {
+            int y = 0, titleBottom = 0;
+            LuZhuModel item = null;
+            for (int i = 0; i < mList.size(); i++) {
             /* * 初始化其他变量 * */
-            drawTitle(mItem.getTitleStr(),
-                    //Color.CYAN
-                    mMgr.titleBgColor, mMgr.divColor, LuZhuItemViewMgr.rf(0, 0, mTotalWidth, mMgr.titleHeight));
+                item = mList.get(i);
+                titleBottom = y + mMgr.titleHeight;
+                drawTitle(item.getTitleStr(),
+                        //Color.CYAN
+                        mMgr.titleBgColor, mMgr.divColor, LuZhuItemViewMgr.rf(0, y, mTotalWidth, titleBottom))
+                ;
             /* * 初始化其他变量 * */
-            drawResults(mItem.resData, mMgr.titleHeight, mItem.mostResCnt);
+                y += drawResults(item.resData, titleBottom, item.mostResCnt) + mMgr.titleHeight;
+            }
         }
     }
 
@@ -103,7 +112,6 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
         int tmpPadding = (widthPixels - titleWidth) / 2;
         if (rf.right > widthPixels * 2) {
             int cnt = (int) (rf.right / widthPixels);
-
             if ((rf.right % widthPixels) > (titleWidth + 100)) {
                 for (int i = 1; i <= cnt; i++) {
                     drawTitle(txt, (rf.right - (i * widthPixels) + rf.left + tmpPadding), y);
@@ -157,22 +165,33 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
             tmp += "\n" + singleTxt;
         }
         tmp = tmp.substring(1);
-//        Log.e("LuZhuCacheTask", mostCnt + "+mostCnt+" + tmp);
+        Log.e("LuZhuCacheTask", mostCnt + "+mostCnt+" + tmp);
         return drawResult(tmp).getHeight();
     }
 
     LinearLayout.LayoutParams measureSize() {
-        if (mItem != null && mItem.resData.size() > 0) {
+        if (mList != null && mList.size() > 0) {
             mResultWidth = measuredWidth(TEXT_TEMPLATE) + mMgr.resTxtPadding * 2;
             mResultSingleHeight = measuredHeight(1, TEXT_TEMPLATE);
-            mTotalHeight = mMgr.titleHeight + mResultSingleHeight * mItem.mostResCnt + mMgr.resTxtPadding * 2;
-            int tmp = (int) Math.ceil(widthPixels / mResultWidth);
+            /* * 计算总高度，（标题高+pading）*size * */
+            mTotalHeight = (mList.size() * (mMgr.titleHeight + mMgr.resTxtPadding * 2));
+            /* * 计算总高度，结果高度(每个路珠最多字符数*每个字符高度，顺便统计下最大列数) * */
+            for (LuZhuModel item : mList) {
+                if (item.resData.size() > mMostColumnCnt) {
+                    mMostColumnCnt = item.resData.size();
+                }
+                mTotalHeight += mResultSingleHeight * item.mostResCnt;
+            }
+            int tmp = (int) Math.ceil(widthPixels / mResultWidth);// 一屏可以放多少列结果
+            /* * 最大列数，不够一屏则补满 * */
             mMostColumnCnt = tmp > mMostColumnCnt ? (tmp + 1) : mMostColumnCnt;
+            /* * 计算总宽度，结果宽度*总列数 * */
             mTotalWidth = mMostColumnCnt * mResultWidth;
             /* * 初始化其他变量 * */
             Paint.FontMetrics fm = mTitlePaint.getFontMetrics();
             mTitlePadding = (mMgr.titleHeight - (fm.descent - fm.ascent)) / 2;
         }
+        Log.e("LuZhuCacheTask", mTotalWidth + "->" + mTotalHeight);
         return new LinearLayout.LayoutParams(mTotalWidth, mTotalHeight);
     }
 
@@ -180,8 +199,8 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
     protected float mTitlePadding = 0;
     protected int
             widthPixels = 720,
-            heightPixels = 1280,
-            mTotalWidth = 720,
+    //            heightPixels = 1280,
+    mTotalWidth = 720,
             mTotalHeight = 1280,
             mResultWidth = 0,
             mResultSingleHeight = 0;
@@ -192,14 +211,14 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
     protected Paint mTitlePaint, mBgPaint;
     protected OnDrawCompleteListener mCompleteListener;
 
-    protected LuZhuModel mItem;
-    protected int mMostColumnCnt = 37;
+    protected List<LuZhuModel> mList;
+    protected int mMostColumnCnt = 0;
 
     public LuZhuCacheTasks(Context context, LuZhuItemViewMgr mgr) {
         mMgr = mgr;
         mCxt = context;
         widthPixels = mTotalWidth = mCxt.getResources().getDisplayMetrics().widthPixels;
-        heightPixels = mTotalHeight = mCxt.getResources().getDisplayMetrics().heightPixels;
+//        heightPixels = mTotalHeight = mCxt.getResources().getDisplayMetrics().heightPixels;
         if (mResultPaint == null) {
             mResultPaint = new TextPaint();
             mTitlePaint = new Paint();
@@ -215,9 +234,13 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
         }
     }
 
-    public LinearLayout.LayoutParams init(LuZhuModel item, int mostColumnCnt, OnDrawCompleteListener listener) {
-        mItem = item;
-        mMostColumnCnt = mostColumnCnt;
+    public LinearLayout.LayoutParams init(final List<LuZhuModel> list, OnDrawCompleteListener listener) {
+        mList = list;
+//                new ArrayList<LuZhuModel>(){
+//            {
+//                add(list.get(0));
+//            }
+//        };
         mCompleteListener = listener;
         return measureSize();
     }
@@ -225,7 +248,8 @@ public class LuZhuCacheTasks extends AsyncTask<SurfaceHolder, String, Object> {
 
     @Override
     protected int[] doInBackground(SurfaceHolder... holder) {
-        if (holder != null && holder.length > 0 && mItem != null && mItem.resData.size() > 0) {
+        Log.e("LuZhuCacheTask", "doInBackground");
+        if (holder != null && holder.length > 0 && mList != null && mList.size() > 0) {
             mCacheCanvas = holder[0].lockCanvas(new Rect(0, 0, mTotalWidth, mTotalHeight));
             doDraw();
             holder[0].unlockCanvasAndPost(mCacheCanvas);

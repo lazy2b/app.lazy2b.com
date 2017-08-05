@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.caimao.luzhu.R;
 import com.caimao.luzhu.model.LuZhuModel;
@@ -60,61 +61,65 @@ public class LuZhuContainerView implements LuZhuCacheTasks.OnDrawCompleteListene
         return new LuZhuContainerView(context, root);
     }
 
+    LuZhuSurfaceView lzv;
+
     @SuppressLint("NewApi")
     void init() {
         mInflater = LayoutInflater.from(mCxt);
         mLuZhuContainerView = (LinearLayout) find(R.id.ll_sh_luzhu);
         mHorizontalScrollView = (HorizontalScrollView) find(R.id.hs_luzhu);
+        lzv = (LuZhuSurfaceView) mInflater.inflate(R.layout.tpl_luzhu_surface, null);
 //        root().setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         ViewTreeObserver vto2 = mRoot.getViewTreeObserver();
         vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mHorizontalScrollView.setMinimumHeight(mRoot.getHeight());
+                mHorizontalScrollView.setMinimumHeight(lzv.getHeight());
             }
         });
     }
 
-    protected List<LuZhuModel> fillEmptyModel(List<LuZhuModel> items) {
-        for (LuZhuModel item : items) {
-            if (item.resData.size() > mostColumnCnt) {
-                mostColumnCnt = item.resData.size();
-            }
-        }
-        return items;
-    }
+//    protected List<LuZhuModel> fillEmptyModel(List<LuZhuModel> items) {
+//        for (LuZhuModel item : items) {
+//            if (item.resData.size() > mostColumnCnt) {
+//                mostColumnCnt = item.resData.size();
+//            }
+//        }
+//        return items;
+//    }
 
     public void onDestory() {
         try {
-            mostColumnCnt = 0;
-            for (int i = 0; i < mLuZhuContainerView.getChildCount(); i++) {
-                ((ViewGroup) mLuZhuContainerView.getChildAt(i)).removeAllViews();
-            }
+//            mostColumnCnt = 0;
+//            for (int i = 0; i < mLuZhuContainerView.getChildCount(); i++) {
+//                ((ViewGroup) mLuZhuContainerView.getChildAt(i)).removeAllViews();
+//            }
             mLuZhuContainerView.removeAllViews();
+//            mHorizontalScrollView.removeAllViews();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void fillData(List<LuZhuModel> items) {
-//        Toast.makeText(mCxt, "start!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mCxt, "start!", Toast.LENGTH_SHORT).show();
         onDestory();
-        mDataList = fillEmptyModel(items);
+//        mDataList = fillEmptyModel(items);
 //        LuZhuItemView lzv;
-        LuZhuSurfaceView lzv;
-//        long t = System.currentTimeMillis();
-        for (LuZhuModel item : mDataList) {
-            lzv = (LuZhuSurfaceView) mInflater.inflate(R.layout.tpl_luzhu_surface, null);
-            lzv.setColorMap(mTxtColor);
-            lzv.setOnCompleteListener(this);
-            mLuZhuContainerView.addView(lzv, lzv.setData(item, mostColumnCnt));
-        }
+        long t = System.currentTimeMillis();
+//        for (LuZhuModel item : mDataList) {
+        lzv.setColorMap(mTxtColor);
+        lzv.setOnCompleteListener(this);
+        mLuZhuContainerView.addView(lzv, lzv.setData(items));
+//        }
+//        LinearLayout.LayoutParams llp = lzv.setData(items);
+//        mHorizontalScrollView.addView(lzv, llp.width, llp.height);
         mHorizontalScrollView.postDelayed(new Runnable() {
             public void run() {
                 mHorizontalScrollView.smoothScrollTo(mLuZhuContainerView.getMeasuredWidth(), 0);
             }
         }, 400);
-//        Toast.makeText(mCxt, "complete!" + (System.currentTimeMillis() - t), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mCxt, "complete!" + (System.currentTimeMillis() - t), Toast.LENGTH_SHORT).show();
     }
 
     @Override

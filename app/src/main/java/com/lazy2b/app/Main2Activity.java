@@ -1,8 +1,11 @@
 package com.lazy2b.app;
 
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.deserializer.ExtraProcessor;
 import com.caimao.luzhu.view.LuZhuContainerView;
 import com.lazy2b.app.luzhu.RespLuZhuModel;
 import com.lazy2b.libs.app.BaseHttpActivity;
@@ -50,38 +53,38 @@ public class Main2Activity extends BaseHttpActivity {
     protected void onCreate() {
         setContentView(R.layout.tpl_luzhu_container);
         super.onCreate();
-        String jsonCache = App.spu().getString("lzdata", "");
-//        if (TextUtils.isEmpty(jsonCache)) {
-        get("dsd", "http://m.1396mo.com/pk10/BigorSmallRoadmap?version=3000&timestamp="
+        String jsonCache = "";//"{\"state\":200,\"items\":[{\"name\":\"冠亞和 大小\",\"extData\":[{\"Name\":\"大\",\"Count\":11},{\"Name\":\"小\",\"Count\":21}],\"fCount\":0,\"sCount\":0,\"fTotalCount\":0,\"closeTotal\":\"1\",\"data\":[{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"},{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"},{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"},{\"result\":\"小\"}]},{\"data\":[{\"result\":\"大\"}]},{\"data\":[{\"result\":\"小\"},{\"result\":\"小\"}]}]},{\"name\":\"冠亞和 单双\",\"extData\":[{\"Name\":\"单\",\"Count\":21},{\"Name\":\"双\",\"Count\":11}],\"fCount\":0,\"sCount\":0,\"fTotalCount\":0,\"closeTotal\":\"1\",\"data\":[{\"data\":[{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"},{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"},{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"},{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"},{\"result\":\"单\"},{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"},{\"result\":\"双\"},{\"result\":\"双\"},{\"result\":\"双\"}]},{\"data\":[{\"result\":\"单\"},{\"result\":\"单\"}]},{\"data\":[{\"result\":\"双\"}]}]}],\"error\":null}";//App.spu().getString("lzdata", "");
+        if (TextUtils.isEmpty(jsonCache)) {
+            get("dsd", "http://m.1396mo.com/pk10/BigorSmallRoadmap?version=3000&timestamp="
 //                        +"0"
-                        + tTs("2017-07-10")
-                , RespLuZhuModel.class);
-//        } else {
-//            new AsyncTask<Object, String, RespBaseModel>() {
-//                @Override
-//                protected RespBaseModel doInBackground(Object... params) {
-//                    String jStr = (String) params[0];
-//                    Class retCls = (Class) params[1];
-//                    RespBaseModel resp = null;
-//                    if (ExtraProcessor.class.isAssignableFrom(retCls)) {
-//                        try {
-//                            resp = (RespBaseModel) JSON.parseObject(jStr, retCls,
-//                                    (ExtraProcessor) retCls.newInstance());
-//                        } catch (Exception e) {
-//                            resp = (RespBaseModel) JSON.parseObject(jStr, retCls);
-//                        }
-//                    } else {
-//                        resp = (RespBaseModel) JSON.parseObject(jStr, retCls);
-//                    }
-//                    return resp;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(RespBaseModel resp) {
-//                    onSuccess(resp);
-//                }
-//            }.execute(jsonCache, RespLuZhuModel.class);
-//        }
+                            + tTs("2017-07-10")
+                    , RespLuZhuModel.class);
+        } else {
+            new AsyncTask<Object, String, RespBaseModel>() {
+                @Override
+                protected RespBaseModel doInBackground(Object... params) {
+                    String jStr = (String) params[0];
+                    Class retCls = (Class) params[1];
+                    RespBaseModel resp = null;
+                    if (ExtraProcessor.class.isAssignableFrom(retCls)) {
+                        try {
+                            resp = (RespBaseModel) JSON.parseObject(jStr, retCls,
+                                    (ExtraProcessor) retCls.newInstance());
+                        } catch (Exception e) {
+                            resp = (RespBaseModel) JSON.parseObject(jStr, retCls);
+                        }
+                    } else {
+                        resp = (RespBaseModel) JSON.parseObject(jStr, retCls);
+                    }
+                    return resp;
+                }
+
+                @Override
+                protected void onPostExecute(RespBaseModel resp) {
+                    onSuccess(resp);
+                }
+            }.execute(jsonCache, RespLuZhuModel.class);
+        }
     }
 
     @Override
